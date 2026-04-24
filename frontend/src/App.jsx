@@ -18,27 +18,6 @@ const SUGGESTIONS = [
   "What is the current research on Long COVID?"
 ];
 
-const DecodingAiMessage = ({ content }) => {
-  const [isDecrypted, setIsDecrypted] = useState(false);
-
-  return (
-    <div className="message-content">
-      {!isDecrypted ? (
-        <DecryptedText
-          text={content}
-          animateOn="view"
-          revealDirection="start"
-          sequential={true}
-          speed={3}
-          onComplete={() => setIsDecrypted(true)}
-        />
-      ) : (
-        <ReactMarkdown>{content}</ReactMarkdown>
-      )}
-    </div>
-  );
-};
-
 function App() {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([]);
@@ -69,7 +48,8 @@ function App() {
     setLoading(true);
 
     try {
-      const res = await axios.post('https://medical-research-ai.onrender.com/', { 
+      // Fixed the API URL here
+      const res = await axios.post('https://medical-research-ai.onrender.com/api/research', { 
         query: text,
         sessionId: sessionId 
       });
@@ -166,7 +146,7 @@ function App() {
                         borderRadius={12}
                         coneSpread={15}
                         edgeSensitivity={20}
-                        fillOpacity={0} /* Kills the flashlight mask */
+                        fillOpacity={0}
                         animated={true}
                       >
                         <div className="suggestion-content">
@@ -186,7 +166,10 @@ function App() {
                       {msg.role === 'user' ? (
                         <div className="message-content">{msg.content}</div>
                       ) : (
-                        <DecodingAiMessage content={msg.content} />
+                        <div className="message-content">
+                          {/* Stripped out the animation, using direct ReactMarkdown here */}
+                          <ReactMarkdown>{msg.content}</ReactMarkdown>
+                        </div>
                       )}
                     </div>
                   </div>
