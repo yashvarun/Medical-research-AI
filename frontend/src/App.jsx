@@ -1,0 +1,245 @@
+import { useState, useRef, useEffect } from 'react';
+import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import DarkVeil from './DarkVeil';
+import BorderGlow from './BorderGlow';
+import GradientText from './GradientText';
+
+import './App.css';
+
+const generateSessionId = () => {
+  return 'session_' + Math.random().toString(36).substr(2, 9);
+};
+
+const SUGGESTIONS = [
+  "What are the latest clinical trials for Type 1 Diabetes?",
+  "Find new research papers on Stage 4 Lung Cancer.",
+  "Are there any active Alzheimer's trials in California?",
+  "What is the current research on Long COVID?"
+];
+
+const DecodingAiMessage = ({ content }) => {
+  const [isDecrypted, setIsDecrypted] = useState(false);
+
+  return (
+    <div className="message-content">
+      {!isDecrypted ? (
+        <DecryptedText
+          text={content}
+          animateOn="view"
+          revealDirection="start"
+          sequential={true}
+          speed={3}
+          onComplete={() => setIsDecrypted(true)}
+        />
+      ) : (
+        <ReactMarkdown>{content}</ReactMarkdown>
+      )}
+    </div>
+  );
+};
+
+function App() {
+  const [input, setInput] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [sessionId, setSessionId] = useState(generateSessionId());
+  
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
+  const handleNewChat = () => {
+    setSessionId(generateSessionId());
+    setMessages([]); 
+  };
+
+  const sendQuery = async (text) => {
+    if (!text.trim()) return;
+
+    const userMessage = { role: 'user', content: text };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput('');
+    setLoading(true);
+
+    try {
+      const res = await axios.post('https://medical-research-ai.onrender.com/', { 
+        query: text,
+        sessionId: sessionId 
+      });
+      
+      const aiMessage = { role: 'ai', content: res.data.result };
+      setMessages((prev) => [...prev, aiMessage]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setMessages((prev) => [
+        ...prev, 
+        { role: 'ai', content: "❌ **Connection Error:** Could not reach the medical research backend." }
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    sendQuery(input);
+  };
+
+  return (
+    <>
+      {/* THE WEBGL BACKGROUND LAYER */}
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
+        <DarkVeil
+          hueShift={180}
+          noiseIntensity={0.15}
+          scanlineIntensity={0.5}
+          speed={0.8}
+          scanlineFrequency={600}
+          warpAmount={0.05}
+        />
+      </div>
+
+      {/* THE FOREGROUND UI */}
+      <div className="app-layout" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
+        <aside className="sidebar">
+          <div className="sidebar-header">
+            <h2>
+              <GradientText  
+                colors={["#5227FF","#FF9FFC","#B497CF"]}  
+                animationSpeed={8}  
+                showBorder={false}  
+                className="custom-class"
+              >  
+                Vynav.atom
+              </GradientText>
+            </h2>
+          </div>
+          <button className="new-chat-btn" onClick={handleNewChat}>
+             New Research
+          </button>
+          <div className="history-list">
+            <p className="history-label" style={{ color: 'var(--text-muted)' }}>Current Session</p>
+            <p style={{ fontSize: '10px', color: '#888', marginTop: '5px' }}>{sessionId}</p>
+          </div>
+        </aside>
+
+        <main className="main-content">
+          <header className="mobile-header" style={{ display: 'none' }}>
+            <h2>
+              <GradientText  
+                colors={["#5227FF","#FF9FFC","#B497CF"]}  
+                animationSpeed={8}  
+                showBorder={false}  
+                className="custom-class"
+              >  
+                Aynav.atom
+              </GradientText>
+            </h2>
+          </header>
+
+          <div className="chat-container">
+            {messages.length === 0 ? (
+              <div className="welcome-screen">
+                <h1 style={{ color: 'var(--text-main)' }}>Let's talk about medical research!</h1>
+                <p style={{ color: 'var(--text-muted)' }}>Ask about clinical trials, latest treatments, or specific conditions.</p>
+                
+                <div className="suggestions-grid">
+                  {SUGGESTIONS.map((text, i) => (
+                    <div 
+                      key={i} 
+                      className="suggestion-glow-wrapper" 
+                      style={{ animationDelay: `${0.1 * (i + 1)}s` }}
+                      onClick={() => sendQuery(text)}
+                    >
+                      <BorderGlow
+                        className="suggestion-glass-card"
+                        backgroundColor="var(--glass-bg)" 
+                        glowColor="210 100 80" 
+                        colors={['#8ab4f8', '#a8c7fa', '#ffffff']} 
+                        borderRadius={12}
+                        coneSpread={15}
+                        edgeSensitivity={20}
+                        fillOpacity={0} /* Kills the flashlight mask */
+                        animated={true}
+                      >
+                        <div className="suggestion-content">
+                          {text}
+                        </div>
+                      </BorderGlow>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="messages-list">
+                {messages.map((msg, index) => (
+                  <div key={index} className={`message-wrapper ${msg.role}`}>
+                    <div className="message-bubble">
+                      {msg.role === 'ai' && <div className="ai-icon">✨</div>}
+                      {msg.role === 'user' ? (
+                        <div className="message-content">{msg.content}</div>
+                      ) : (
+                        <DecodingAiMessage content={msg.content} />
+                      )}
+                    </div>
+                  </div>
+                ))}
+                
+                {loading && (
+                  <div className="message-wrapper ai">
+                    <div className="message-bubble">
+                      <div className="ai-icon">✨</div>
+                      <div className="message-content thinking-indicator">
+                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
+                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
+                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          <div className="input-container">
+            <form onSubmit={handleSubmit} className="input-box">
+              <textarea 
+                value={input} 
+                onChange={(e) => setInput(e.target.value)} 
+                onInput={(e) => {
+                  e.target.style.height = 'auto';
+                  e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }
+                }}
+                placeholder="Ask a medical question..."
+                disabled={loading}
+                rows={1}
+              />
+              <button type="submit" disabled={loading || !input.trim()}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M2.01 21L23 12L2.01 3L2 10L17 12L2 14L2.01 21Z" fill="currentColor"/>
+                </svg>
+              </button>
+            </form>
+            <p className="disclaimer">Aynav.atom AI is a research assistant prototype. Always verify medical information.</p>
+          </div>
+        </main>
+      </div>
+    </>
+  );
+}
+
+export default App;
