@@ -3,6 +3,8 @@ const express = require('express');
 const cors = require('cors');
 const { Groq } = require('groq-sdk');
 
+const mongoose = require('mongoose');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -34,7 +36,7 @@ app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));
 // 1. MONGODB SETUP & SCHEMA
 // ============================================================================
 // Replace YOUR_MONGODB_PASSWORD with your actual password
-mongoose.connect('mongodb+srv://yashvarun2001_db_user:QIqxeLmbsh449qqB@cluster0.jomyjtv.mongodb.net/?appName=Cluster0')
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('🟢 Connected to MongoDB Atlas!'))
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
