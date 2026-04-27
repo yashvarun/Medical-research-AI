@@ -92,19 +92,7 @@ function App() {
 
       {/* THE FOREGROUND UI */}
       <div className="app-layout" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
-      <aside 
-          className="sidebar" 
-          style={{ 
-            width: isSidebarOpen ? '260px' : (isMobile ? '0px' : '70px'), 
-            transition: 'width 0.3s ease',
-            overflow: 'hidden',
-            position: isMobile ? 'absolute' : 'relative', // Overlay on mobile
-            height: '100vh',
-            zIndex: 1000,
-            background: isMobile ? 'rgba(10, 10, 15, 0.95)' : 'transparent',
-            backdropFilter: isMobile ? 'blur(10px)' : 'none'
-          }}
-        >
+     <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: '260px' }}>
             <h2>
               <GradientText colors={["#5227FF","#FF9FFC","#B497CF"]} animationSpeed={8} showBorder={false}>  
@@ -113,16 +101,16 @@ function App() {
             </h2>
             <button 
               onClick={() => setIsSidebarOpen(false)}
-              style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '5px' }}
+              className="mobile-close-btn"
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 6L6 18M6 6l12 12"/> {/* Close 'X' icon */}
+                <path d="M18 6L6 18M6 6l12 12"/> 
               </svg>
             </button>
           </div>
 
           <div style={{ marginTop: '20px', minWidth: '260px' }}>
-            <button className="new-chat-btn" onClick={() => { handleNewChat(); if(isMobile) setIsSidebarOpen(false); }}>
+            <button className="new-chat-btn" onClick={() => { handleNewChat(); setIsSidebarOpen(false); }}>
                New Research
             </button>
             <div className="history-list">
