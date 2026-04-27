@@ -75,7 +75,7 @@ function App() {
     sendQuery(input);
   };
 
-  return (
+ return (
     <>
       {/* THE WEBGL BACKGROUND LAYER */}
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
@@ -121,7 +121,6 @@ function App() {
 
         <main className="main-content" style={{ width: '100%', overflow: 'hidden' }}>
           
-          {/* UPDATED MOBILE HEADER */}
           <header className="mobile-header" style={{ display: isMobile ? 'flex' : 'none', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -224,7 +223,6 @@ function App() {
                   </div>
                 )}
                 
-                {/* THE MISSING CLOSING TAGS ARE RIGHT HERE */}
                 <div ref={messagesEndRef} />
               </div>
             )}
@@ -262,5 +260,7 @@ function App() {
     </>
   );
 }
+
+export default App;
 
 export default App;
