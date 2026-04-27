@@ -52,7 +52,6 @@ function App() {
     setLoading(true);
 
     try {
-      // Fixed the API URL here
       const res = await axios.post('https://medical-research-ai.onrender.com/api/research', { 
         query: text,
         sessionId: sessionId 
@@ -82,7 +81,7 @@ function App() {
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}>
         <DarkVeil
           hueShift={180}
-          noiseIntensity={0.15}
+          noiseIntensity={0.10}
           scanlineIntensity={0.5}
           speed={0.8}
           scanlineFrequency={600}
@@ -92,7 +91,7 @@ function App() {
 
       {/* THE FOREGROUND UI */}
       <div className="app-layout" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
-     <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
+        <aside className={`sidebar ${isSidebarOpen ? 'open' : 'closed'}`}>
           <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: '260px' }}>
             <h2>
               <GradientText colors={["#5227FF","#FF9FFC","#B497CF"]} animationSpeed={8} showBorder={false}>  
@@ -129,7 +128,7 @@ function App() {
               style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '0' }}
             >
               <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 6H20M4 12H20M4 18H20"/> {/* Hamburger icon */}
+                <path d="M4 6H20M4 12H20M4 18H20"/> 
               </svg>
             </button>
             <h2 style={{ margin: 0 }}>
@@ -137,7 +136,7 @@ function App() {
                 Aynav.atom
               </GradientText>
             </h2>
-            <div style={{ width: '28px' }}></div> {/* Spacer for centering */}
+            <div style={{ width: '28px' }}></div> 
           </header>
 
           <div className="chat-container">
@@ -196,7 +195,6 @@ function App() {
                         <div className="message-content">{msg.content}</div>
                       ) : (
                         <div className="message-content">
-                          {/* Stripped out the animation, using direct ReactMarkdown here */}
                           <ReactMarkdown>{msg.content}</ReactMarkdown>
                         </div>
                       )}
@@ -205,26 +203,32 @@ function App() {
                 ))}
                 
                 {loading && (
-                 <div className="message-wrapper ai">
-    <div className="message-bubble" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-      <div className="ai-icon">✨</div>
-      <div className="message-content" style={{ padding: 0 }}>
-        <ShinyText 
-          text="Thinking..." 
-          speed={1.5} 
-          delay={0} 
-          color="#888888" 
-          shineColor="#ffffff" 
-          spread={90} 
-          direction="left" 
-          yoyo={true} 
-          pauseOnHover={false} 
-          disabled={false}
-        />
-      </div>
-    </div>
-  </div>
-)}
+                  <div className="message-wrapper ai">
+                    <div className="message-bubble" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div className="ai-icon">✨</div>
+                      <div className="message-content" style={{ padding: 0 }}>
+                        <ShinyText 
+                          text="Thinking..." 
+                          speed={1.5} 
+                          delay={0} 
+                          color="#888888" 
+                          shineColor="#ffffff" 
+                          spread={90} 
+                          direction="left" 
+                          yoyo={true} 
+                          pauseOnHover={false} 
+                          disabled={false}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {/* THE MISSING CLOSING TAGS ARE RIGHT HERE */}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
 
           <div className="input-container">
             <form onSubmit={handleSubmit} className="input-box">
