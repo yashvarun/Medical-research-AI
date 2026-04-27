@@ -217,21 +217,26 @@ function App() {
                 ))}
                 
                 {loading && (
-                  <div className="message-wrapper ai">
-                    <div className="message-bubble">
-                      <div className="ai-icon">✨ Thinking...</div>
-                      <div className="message-content thinking-indicator">
-                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
-                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
-                        <span style={{ backgroundColor: '#a0c2f9' }}></span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-            )}
-          </div>
+                 <div className="message-wrapper ai">
+    <div className="message-bubble" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="ai-icon">✨</div>
+      <div className="message-content" style={{ padding: 0 }}>
+        <ShinyText 
+          text="Thinking..." 
+          speed={1.5} 
+          delay={0} 
+          color="#888888" 
+          shineColor="#ffffff" 
+          spread={90} 
+          direction="left" 
+          yoyo={true} 
+          pauseOnHover={false} 
+          disabled={false}
+        />
+      </div>
+    </div>
+  </div>
+)}
 
           <div className="input-container">
             <form onSubmit={handleSubmit} className="input-box">
