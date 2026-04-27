@@ -95,7 +95,7 @@ function App() {
           <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: '260px' }}>
             <h2>
               <GradientText colors={["#5227FF","#FF9FFC","#B497CF"]} animationSpeed={8} showBorder={false}>  
-                Vynav.atom
+                Aynav.atom
               </GradientText>
             </h2>
             <button 
