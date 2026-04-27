@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import DarkVeil from './DarkVeil';
 import BorderGlow from './BorderGlow';
 import GradientText from './GradientText';
-
+import ShinyText from './ShinyText';
 import './App.css';
 
 const generateSessionId = () => {
@@ -29,6 +29,11 @@ function App() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  
+  // Detect if it's a mobile screen (less than 768px wide)
+  const isMobile = window.innerWidth <= 768;
+  // Default to closed on mobile, open on desktop
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!isMobile);
 
   useEffect(() => {
     scrollToBottom();
@@ -88,79 +93,83 @@ function App() {
 
       {/* THE FOREGROUND UI */}
       <div className="app-layout" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
-       <aside 
+      <aside 
           className="sidebar" 
           style={{ 
-            width: isSidebarOpen ? '260px' : '70px', 
+            width: isSidebarOpen ? '260px' : (isMobile ? '0px' : '70px'), 
             transition: 'width 0.3s ease',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            position: isMobile ? 'absolute' : 'relative', // Overlay on mobile
+            height: '100vh',
+            zIndex: 1000,
+            background: isMobile ? 'rgba(10, 10, 15, 0.95)' : 'transparent',
+            backdropFilter: isMobile ? 'blur(10px)' : 'none'
           }}
         >
-          <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            {isSidebarOpen && (
-              <h2>
-                <GradientText  
-                  colors={["#5227FF","#FF9FFC","#B497CF"]}  
-                  animationSpeed={8}  
-                  showBorder={false}  
-                  className="custom-class"
-                >  
-                  Vynav.atom
-                </GradientText>
-              </h2>
-            )}
+          <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', minWidth: '260px' }}>
+            <h2>
+              <GradientText colors={["#5227FF","#FF9FFC","#B497CF"]} animationSpeed={8} showBorder={false}>  
+                Vynav.atom
+              </GradientText>
+            </h2>
             <button 
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              style={{ 
-                background: 'transparent', 
-                border: 'none', 
-                color: 'var(--text-main)', 
-                cursor: 'pointer',
-                padding: '5px',
-                margin: isSidebarOpen ? '0' : '0 auto',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-              title="Toggle Sidebar"
+              onClick={() => setIsSidebarOpen(false)}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '5px' }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 6L6 18M6 6l12 12"/> {/* Close 'X' icon */}
               </svg>
             </button>
           </div>
 
-          {isSidebarOpen && (
-            <div style={{ marginTop: '20px', animation: 'fadeIn 0.3s ease' }}>
-              <button className="new-chat-btn" onClick={handleNewChat}>
-                 New Research
-              </button>
-              <div className="history-list">
-                <p className="history-label" style={{ color: 'var(--text-muted)' }}>Current Session</p>
-                <p style={{ fontSize: '10px', color: '#888', marginTop: '5px' }}>{sessionId}</p>
-              </div>
+          <div style={{ marginTop: '20px', minWidth: '260px' }}>
+            <button className="new-chat-btn" onClick={() => { handleNewChat(); if(isMobile) setIsSidebarOpen(false); }}>
+               New Research
+            </button>
+            <div className="history-list">
+              <p className="history-label" style={{ color: 'var(--text-muted)' }}>Current Session</p>
+              <p style={{ fontSize: '10px', color: '#888', marginTop: '5px' }}>{sessionId}</p>
             </div>
-          )}
+          </div>
         </aside>
 
-        <main className="main-content">
-          <header className="mobile-header" style={{ display: 'none' }}>
-            <h2>
-              <GradientText  
-                colors={["#5227FF","#FF9FFC","#B497CF"]}  
-                animationSpeed={8}  
-                showBorder={false}  
-                className="custom-class"
-              >  
+        <main className="main-content" style={{ width: '100%', overflow: 'hidden' }}>
+          
+          {/* UPDATED MOBILE HEADER */}
+          <header className="mobile-header" style={{ display: isMobile ? 'flex' : 'none', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(10px)', zIndex: 10 }}>
+            <button 
+              onClick={() => setIsSidebarOpen(true)}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-main)', cursor: 'pointer', padding: '0' }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 6H20M4 12H20M4 18H20"/> {/* Hamburger icon */}
+              </svg>
+            </button>
+            <h2 style={{ margin: 0 }}>
+              <GradientText colors={["#5227FF","#FF9FFC","#B497CF"]} animationSpeed={8} showBorder={false}>  
                 Aynav.atom
               </GradientText>
             </h2>
+            <div style={{ width: '28px' }}></div> {/* Spacer for centering */}
           </header>
 
           <div className="chat-container">
             {messages.length === 0 ? (
               <div className="welcome-screen">
-                <h1 style={{ color: 'var(--text-main)' }}>Let's talk about medical research!</h1>
+                <h1>
+                  <ShinyText 
+                    text="Let's talk about medical research!" 
+                    speed={2} 
+                    delay={0} 
+                    color="#b5b5b5" 
+                    shineColor="#ffffff" 
+                    spread={120} 
+                    direction="left" 
+                    yoyo={false} 
+                    pauseOnHover={false} 
+                    disabled={false}
+                  />
+                </h1>
                 <p style={{ color: 'var(--text-muted)' }}>Ask about clinical trials, latest treatments, or specific conditions.</p>
                 
                 <div className="suggestions-grid">
