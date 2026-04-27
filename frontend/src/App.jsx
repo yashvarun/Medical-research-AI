@@ -23,7 +23,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(generateSessionId());
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  //const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
