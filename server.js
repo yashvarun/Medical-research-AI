@@ -16,10 +16,10 @@ app.post('/api/research', async (req, res) => {
   try {
     const chatCompletion = await groq.chat.completions.create({
       messages: [
-        { role: "system", content: "You are Curalink AI, an expert medical research assistant." },
+        { role: "system", content: "You are Aynav.atom, an expert medical research assistant." },
         { role: "user", content: query }
       ],
-      model: "llama3-8b-8192", 
+      model: "llama-3.1-8b-instant", 
       temperature: 0.5,
     });
     res.json({ result: chatCompletion.choices[0].message.content });
