@@ -23,7 +23,7 @@ function App() {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sessionId, setSessionId] = useState(generateSessionId());
-  
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -88,26 +88,59 @@ function App() {
 
       {/* THE FOREGROUND UI */}
       <div className="app-layout" style={{ background: 'transparent', position: 'relative', zIndex: 1 }}>
-        <aside className="sidebar">
-          <div className="sidebar-header">
-            <h2>
-              <GradientText  
-                colors={["#5227FF","#FF9FFC","#B497CF"]}  
-                animationSpeed={8}  
-                showBorder={false}  
-                className="custom-class"
-              >  
-                Vynav.atom
-              </GradientText>
-            </h2>
+       <aside 
+          className="sidebar" 
+          style={{ 
+            width: isSidebarOpen ? '260px' : '70px', 
+            transition: 'width 0.3s ease',
+            overflow: 'hidden'
+          }}
+        >
+          <div className="sidebar-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            {isSidebarOpen && (
+              <h2>
+                <GradientText  
+                  colors={["#5227FF","#FF9FFC","#B497CF"]}  
+                  animationSpeed={8}  
+                  showBorder={false}  
+                  className="custom-class"
+                >  
+                  Vynav.atom
+                </GradientText>
+              </h2>
+            )}
+            <button 
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              style={{ 
+                background: 'transparent', 
+                border: 'none', 
+                color: 'var(--text-main)', 
+                cursor: 'pointer',
+                padding: '5px',
+                margin: isSidebarOpen ? '0' : '0 auto',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              title="Toggle Sidebar"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 6H20M4 12H20M4 18H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
-          <button className="new-chat-btn" onClick={handleNewChat}>
-             New Research
-          </button>
-          <div className="history-list">
-            <p className="history-label" style={{ color: 'var(--text-muted)' }}>Current Session</p>
-            <p style={{ fontSize: '10px', color: '#888', marginTop: '5px' }}>{sessionId}</p>
-          </div>
+
+          {isSidebarOpen && (
+            <div style={{ marginTop: '20px', animation: 'fadeIn 0.3s ease' }}>
+              <button className="new-chat-btn" onClick={handleNewChat}>
+                 New Research
+              </button>
+              <div className="history-list">
+                <p className="history-label" style={{ color: 'var(--text-muted)' }}>Current Session</p>
+                <p style={{ fontSize: '10px', color: '#888', marginTop: '5px' }}>{sessionId}</p>
+              </div>
+            </div>
+          )}
         </aside>
 
         <main className="main-content">
@@ -178,7 +211,7 @@ function App() {
                 {loading && (
                   <div className="message-wrapper ai">
                     <div className="message-bubble">
-                      <div className="ai-icon">✨</div>
+                      <div className="ai-icon">✨ Thinking...</div>
                       <div className="message-content thinking-indicator">
                         <span style={{ backgroundColor: '#a0c2f9' }}></span>
                         <span style={{ backgroundColor: '#a0c2f9' }}></span>
