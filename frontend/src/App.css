@@ -270,51 +270,76 @@ body {
 .input-container { max-width: 800px; margin: 0 auto; width: 100%; padding: 0 20px 20px 20px; }
 .disclaimer { text-align: center; font-size: 0.75rem; color: var(--text-muted); margin-top: 10px; }
 /* MOBILE RESPONSIVE FIXES */
+/* DESKTOP SIDEBAR DEFAULTS */
+.sidebar {
+  width: 70px;
+  transition: width 0.3s ease, left 0.3s ease;
+  overflow: hidden;
+  height: 100vh;
+  z-index: 100;
+}
+.sidebar.open {
+  width: 260px;
+}
+.mobile-close-btn {
+  display: none;
+}
+
+/* MOBILE OVERRIDES (100% CSS Driven) */
 @media (max-width: 768px) {
   .app-layout {
-    flex-direction: column !important;
+    display: block !important; /* Destroys the desktop side-by-side grid */
     width: 100vw !important;
     overflow-x: hidden !important;
   }
   
-  /* Kill the invisible desktop sidebar margin */
+  /* Turn the sidebar into a hidden hovering drawer */
+  .sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: -300px !important; /* Hides it completely off-screen */
+    width: 260px !important;
+    z-index: 9999 !important;
+    background: rgba(10, 10, 15, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+  }
+  
+  .sidebar.open {
+    left: 0 !important; /* Slides in smoothly when clicked */
+  }
+  
+  .mobile-close-btn {
+    display: block !important;
+    background: transparent; 
+    border: none; 
+    color: white; 
+    cursor: pointer; 
+    padding: 5px;
+  }
+
+  /* Force main content to ignore the sidebar entirely */
   .main-content {
-    margin-left: 0 !important; 
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100vw !important;
-    padding: 0 !important;
+    margin-left: 0 !important;
   }
 
   .chat-container {
     width: 100vw !important;
-    padding: 15px !important;
+    padding: 10px 15px !important;
     box-sizing: border-box !important;
   }
-
-  .message-wrapper {
-    width: 100% !important;
-    margin-bottom: 20px !important;
-  }
-
-  /* Force the bubbles to stretch across the screen */
+  
   .message-bubble {
     max-width: 95% !important; 
     width: 100% !important;
-    padding: 15px !important;
-    box-sizing: border-box !important;
   }
-
-  .message-content {
-    text-align: justify !important; 
-    font-size: 15px !important;     
-    line-height: 1.6 !important;
-  }
-
-  /* Fix the input box width */
+  
   .input-container {
     width: 100vw !important;
     padding: 10px 15px !important;
     box-sizing: border-box !important;
-    margin-left: 0 !important;
-    left: 0 !important;
   }
 }
